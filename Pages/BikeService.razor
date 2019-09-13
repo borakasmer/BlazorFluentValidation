@@ -1,0 +1,77 @@
+@page "/bikeservice"
+@using bikeservice.Data
+@using FluentValidation
+
+<h1>Coder Bike Service</h1>
+
+<p>Customer Service Records</p>
+
+<EditForm Model="customer" OnValidSubmit="SaveCustomer">
+    <FluentValidator TValidator="CustomerValidator" />
+
+    <h3>Customer Name</h3>
+    <InputText placeholder="First name" @bind-Value="customer.Name" />
+    <InputText placeholder="Last name" @bind-Value="customer.Surname" />
+    <ValidationMessage For="@(() => customer.Name)" />
+    <ValidationMessage For="@(() => customer.Surname)" />
+
+    <h3>Customer Bike</h3>
+    <div>
+        <InputText placeholder="Model" @bind-Value="customer.Bike.Model" />
+        <ValidationMessage For="@(() => customer.Bike.Model)" />
+    </div>
+    <div>
+        <InputText placeholder="Year" @bind-Value="customer.Bike.Year" />
+        <ValidationMessage For="@(() => customer.Bike.Year)" />
+    </div>
+    <div>
+        <InputText placeholder="Seri No" @bind-Value="customer.Bike.Serino" />
+        <ValidationMessage For="@(() => customer.Bike.Serino)" />
+    </div>
+
+    <h3>
+       Service List        
+        [<a href="javascript: void(0)"  @onclick="AddService">Add Service Record</a>]
+    </h3>
+    <ValidationMessage For="@(() => customer.Services)" />
+
+    @foreach (var service in customer.Services)
+    {
+        <p>
+            <InputSelect @bind-Value="service.ServiceType">
+                <option value="@Service.Type.BinBakım">Bin Bakım</option>
+                <option value="@Service.Type.AltıBinBakım">AltıBin Bakım</option>
+                <option value="@Service.Type.OnikiBinBakım">OnikiBin Bakım</option>                
+            </InputSelect>
+
+            @if (service.ServiceType == Service.Type.OnikiBinBakım)
+            {
+                <InputText placeholder="Seri No" @bind-Value="service.SeriNo" />
+            }
+            else
+            {
+                <span>You don't need Service Number!</span>
+            }
+
+            <button type="button" @onclick="@(() => customer.Services.Remove(service))">Remove</button>
+
+            <ValidationMessage For="@(() => service.SeriNo)" />
+        </p>
+    }
+
+    <p><button type="submit">Submit</button></p>
+</EditForm>
+
+@code {
+    private Customer customer = new Customer();
+
+    void AddService()
+    {
+        customer.Services.Add(new Service());
+    }
+
+    void SaveCustomer()
+    {
+        Console.WriteLine("TODO: Actually do something with the valid data");
+    }
+}
